@@ -40,8 +40,6 @@ public class TaskManager {
             optionsView();
         }
     }
-
-
     public static void optionsView() {
         System.out.println(ConsoleColors.BLUE + "Please select an option: " + ConsoleColors.RESET);
         String[] option = {"add", "remove", "list", "exit"};
@@ -49,7 +47,6 @@ public class TaskManager {
             System.out.println(s);
         }
     }
-
     public static void addTask() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please add task description");
