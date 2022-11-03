@@ -1,22 +1,23 @@
 package pl.coderslab;
+
 import org.apache.commons.lang3.ArrayUtils;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.sql.SQLOutput;
+import java.util.*;
 
 public class TaskManager {
     static String[][] dataCsv;
+
     public static void main(String[] args) {
         String FILE_NAME = "tasks.csv";
         optionsView();
-       dataCsv=dataFromCsv(FILE_NAME);
+        dataCsv = dataFromCsv(FILE_NAME);
         Scanner scanner = new Scanner(System.in);
-        while(scanner.hasNext()) {
+        while (scanner.hasNext()) {
             String input = scanner.next();
             switch (input) {
                 case "add":
@@ -38,7 +39,7 @@ public class TaskManager {
             }
             optionsView();
         }
-        }
+    }
 
 
     public static void optionsView() {
@@ -57,25 +58,29 @@ public class TaskManager {
         String dueDateInput = scanner.nextLine();
         System.out.println("Is your task important: true/false");
         String isImportantInput = scanner.nextLine();
-        dataCsv =  Arrays.copyOf(dataCsv, dataCsv.length + 1);
-        dataCsv[dataCsv.length-1] = new String[3];
-        dataCsv[dataCsv.length-1][0] = descriptionInput;
-        dataCsv[dataCsv.length-1][1] = dueDateInput;
-        dataCsv[dataCsv.length-1][2] = isImportantInput;
+        dataCsv = Arrays.copyOf(dataCsv, dataCsv.length + 1);
+        dataCsv[dataCsv.length - 1] = new String[3];
+        dataCsv[dataCsv.length - 1][0] = descriptionInput;
+        dataCsv[dataCsv.length - 1][1] = dueDateInput;
+        dataCsv[dataCsv.length - 1][2] = isImportantInput;
     }
 
-    public static void removeTask(String [][] tasks) {
+    public static void removeTask(String[][] tasks) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please select number to remove.");
-        int number = Integer.parseInt(scanner.nextLine());
         try {
-            if (number < tasks.length) {
+            int number = Integer.parseInt(scanner.nextLine());
+            if (number < dataCsv.length) {
                 dataCsv = ArrayUtils.remove(tasks, number);
+                System.out.println("Value was successfully deleted.");
+            } else {
+                System.out.println("Number not exist");
             }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("Element not exist in tab");
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Number is not correct");
         }
     }
+
 
     public static void listTask(String[][] tasks) {
         for (int i = 0; i < tasks.length; i++) {
@@ -87,25 +92,23 @@ public class TaskManager {
         }
     }
 
-    public static void exitTask( String fileName) {
+    public static void exitTask(String fileName) {
         Path file = Paths.get(fileName);
         List<String> lines = new ArrayList<>();
         for (int i = 0; i < dataCsv.length; i++) {
-            String line=String.join(",", dataCsv[i]);
+            String line = String.join(",", dataCsv[i]);
             lines.add(line);
         }
-
         try {
             if (Files.exists(file)) {
-
                 Files.write(file, lines);
             }
         } catch (IOException e) {
-            System.out.println("Nie można zapisać pliku.");
+            System.out.println("Don't save file");
         }
     }
 
-        public static String[][] dataFromCsv(String fileName) {
+    public static String[][] dataFromCsv(String fileName) {
         Path file = Paths.get(fileName);
         String[][] data = null;
         try {
@@ -114,12 +117,10 @@ public class TaskManager {
                 for (String line : Files.readAllLines(file)) {
                     lines.add(line);
                 }
-                data = new String[lines.size()][lines.get(0).split(",").length];
+                data = new String[lines.size()][];
                 for (int i = 0; i < lines.size(); i++) {
-                    String[] split = lines.get(i).split(",");
-                    for (int j = 0; j < split.length; j++) {
-                        data[i][j] = split[j];
-                    }
+                    data[i] = lines.get(i).split(",");
+
                 }
             }
         } catch (IOException e) {
